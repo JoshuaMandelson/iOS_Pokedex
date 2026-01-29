@@ -7,12 +7,31 @@
 
 import SwiftUI
 
-struct launchscreen: View {
+struct LaunchScreen: View {
+    @State private var isActive = false
+
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        ZStack {
+            Color.black
+                .ignoresSafeArea()
+            if isActive {
+                CreaturesListView()
+            } else {
+                Image("pokemon")
+                    .resizable()
+                    .scaledToFit()
+                    .ignoresSafeArea()
+            }
+        }
+        .onAppear {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+                isActive = true
+            }
+        }
     }
 }
 
 #Preview {
-    launchscreen()
+    LaunchScreen()
 }
+
