@@ -1,7 +1,7 @@
 
 iOS Pokédex App:
 
-    •    This is an iOS Pokédex built with SwiftUI, SwiftData, and MVVM, featuring Pokémon detail views and a persistent, user managed team of up to six Pokémon.
+This is an iOS Pokédex built with SwiftUI, SwiftData, and MVVM, featuring Pokémon detail views and a persistent, user managed team of up to six Pokémon.
 
 Features:
 
