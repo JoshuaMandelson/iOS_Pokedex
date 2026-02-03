@@ -6,86 +6,118 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct DetailView: View {
-    let creature: Creature
-    @State private var creatureDetail = CreatureDetail()
-    
+    let creatureURL: String
+    let pokemonId: Int
+    let name: String
+
+    @State private var detail = CreatureDetail()
+    @ObservedObject var teamVM: TeamViewModel
+
     var body: some View {
         ZStack {
-            LinearGradient(colors: [
-                Color(red: 0/255, green: 50/255, blue: 100/255),
-                Color(.cyan)
-            ], startPoint: .topLeading, endPoint: .bottomTrailing)
+            // Background gradient
+            LinearGradient(
+                colors: [Color(red: 0/255, green: 50/255, blue: 100/255), Color(.cyan)],
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            )
             .ignoresSafeArea()
-            VStack(alignment: .leading, spacing: 3) {
-                Text(creature.name.capitalized)
+            
+            VStack(spacing: 20) {
+                // Name
+                Text(name.capitalized)
                     .font(Font.custom("Avenir Next Condensed", size: 60))
-                    .bold()
+                    .fontWeight(.bold)
+                    .foregroundColor(.white)
+                    .shadow(radius: 5)
                     .minimumScaleFactor(0.5)
                     .lineLimit(1)
-                    .foregroundStyle(.white)
-
+                
+                // Divider
                 Rectangle()
-                    .frame(height: 1)
-                    .foregroundStyle(.gray)
-                    .padding(.bottom)
-                HStack {
-                    AsyncImage(url: URL(string: creatureDetail.imageURL)) { image in
-                        image
-                            .resizable()
-                            .scaledToFit()
-                            .background(.white)
-                            .frame(width: 100, height: 100)
-                            .clipShape(RoundedRectangle(cornerRadius: 16))
-                            .shadow(radius: 8, x: 5, y: 5)
-                            .overlay{
-                                RoundedRectangle(cornerRadius: 16)
-                                    .stroke(.gray.opacity(0.5), lineWidth: 1)
-                            }
-                            .padding(.trailing)
-                    } placeholder: {
-                        ProgressView()
-                            .frame(width: 100, height: 100)
+                    .frame(height: 2)
+                    .foregroundColor(.white.opacity(0.5))
+                    .padding(.horizontal)
+                
+                // Pokémon image
+                AsyncImage(url: URL(string: detail.imageURL)) { image in
+                    image
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 180, height: 180)
+                        .background(Color.white.opacity(0.2))
+                        .clipShape(RoundedRectangle(cornerRadius: 20))
+                        .shadow(radius: 10)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 20)
+                                .stroke(Color.white.opacity(0.5), lineWidth: 2)
+                        )
+                } placeholder: {
+                    ProgressView()
+                        .frame(width: 180, height: 180)
+                }
+                
+                // Stats
+                HStack(spacing: 40) {
+                    VStack {
+                        Text("Height")
+                            .font(.headline)
+                            .foregroundColor(.white)
+                        Text(String(format: "%.1f", detail.height))
+                            .font(.title)
+                            .bold()
+                            .foregroundColor(.white)
                     }
-                    
-                    VStack (alignment: .leading){
-                        HStack(alignment: .top){
-                            Text("Height:")
-                                .font(.title2)
-                                .bold()
-                                .foregroundStyle(.white)
-                            Text(String(format: "%.1f", creatureDetail.height))
-                                .font(.largeTitle)
-                                .bold()
-                                .foregroundStyle(.white)
-
-                        }
-                        HStack(alignment: .top){
-                            Text("Weight:")
-                                .font(.title2)
-                                .bold()
-                                .foregroundStyle(.white)
-                            Text(String(format: "%.1f", creatureDetail.weight))
-                                .font(.largeTitle)
-                                .bold()
-                                .foregroundStyle(.white)
-
-                        }
+                    VStack {
+                        Text("Weight")
+                            .font(.headline)
+                            .foregroundColor(.white)
+                        Text(String(format: "%.1f", detail.weight))
+                            .font(.title)
+                            .bold()
+                            .foregroundColor(.white)
                     }
                 }
+                
                 Spacer()
                 
+                // Add to Team Button
+                Button {
+                    teamVM.addToTeam(
+                        pokemonId: pokemonId,
+                        name: name,
+                        imageURL: detail.imageURL
+                    )
+                } label: {
+                    Text("Add to Team")
+                        .font(.headline)
+                        .foregroundColor(.blue)
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                        .background(Color.white)
+                        .clipShape(RoundedRectangle(cornerRadius: 15))
+                        .shadow(radius: 5, x: 3, y: 3)
+                }
+                .padding(.horizontal)
             }
-            .task {
-                creatureDetail.urlString = creature.url
-                await creatureDetail.getData()
-            }
-            .padding()
+            .padding(.top, 30)
+            .padding(.bottom, 20)
+        }
+        .alert(
+            "Team Full",
+            isPresented: $teamVM.showTeamFullAlert
+        ) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text("You can only have 6 Pokémon on your team.")
+        }
+        .task {
+            detail.urlString = creatureURL
+            await detail.getData()
         }
     }
 }
 
-#Preview {
-    DetailView(creature: Creature(name: "bulbasaur", url: "https://pokeapi.co/api/v2/pokemon/1/"))
-}

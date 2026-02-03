@@ -6,12 +6,18 @@
 //
 
 import SwiftData
+import Foundation
+internal import Combine
+import Observation
 
 @MainActor
+@Observable
 class TeamViewModel: ObservableObject {
 
+    var team: [TeamPokemon] = []
+    var showTeamFullAlert = false
+
     private let modelContext: ModelContext
-    @Published private(set) var team: [TeamPokemon] = []
 
     init(modelContext: ModelContext) {
         self.modelContext = modelContext
@@ -23,20 +29,27 @@ class TeamViewModel: ObservableObject {
         team = (try? modelContext.fetch(descriptor)) ?? []
     }
 
-    func addToTeam(pokemon: Pokemon) {
-        guard team.count < 6 else { return }
-
-        guard !team.contains(where: { $0.pokemonId == pokemon.id }) else {
+    func addToTeam(
+        pokemonId: Int,
+        name: String,
+        imageURL: String
+    ) {
+        guard team.count < 6 else {
+            showTeamFullAlert = true
             return
         }
 
-        let newPokemon = TeamPokemon(
-            pokemonId: pokemon.id,
-            name: pokemon.name,
-            spriteURL: pokemon.sprite.frontDefault
+        guard !team.contains(where: { $0.pokemonId == pokemonId }) else {
+            return
+        }
+
+        let teamPokemon = TeamPokemon(
+            pokemonId: pokemonId,
+            name: name,
+            spriteURL: imageURL
         )
 
-        modelContext.insert(newPokemon)
+        modelContext.insert(teamPokemon)
         fetchTeam()
     }
 
@@ -45,3 +58,4 @@ class TeamViewModel: ObservableObject {
         fetchTeam()
     }
 }
+
