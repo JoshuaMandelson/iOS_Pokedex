@@ -13,8 +13,9 @@ struct DetailView: View {
     let pokemonId: Int
     let name: String
 
+    @Query private var team: [TeamPokemon]
     @State private var detail = CreatureDetail()
-    @ObservedObject var teamVM: TeamViewModel
+    @State var teamVM: TeamViewModel
 
     var body: some View {
         ZStack {
@@ -86,11 +87,15 @@ struct DetailView: View {
                 
                 // Add to Team Button
                 Button {
-                    teamVM.addToTeam(
-                        pokemonId: pokemonId,
-                        name: name,
-                        imageURL: detail.imageURL
-                    )
+                    if teamVM.canAddToTeam(currentCount: team.count) {
+                        teamVM.addToTeam(
+                            pokemonId: pokemonId,
+                            name: name,
+                            imageURL: detail.imageURL
+                        )
+                    } else{
+                        teamVM.showTeamFullAlert = true
+                    }
                 } label: {
                     Text("Add to Team")
                         .font(.headline)

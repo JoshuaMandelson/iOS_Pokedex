@@ -9,7 +9,7 @@ import SwiftData
 
 @Model
 class TeamPokemon {
-    @Attribute(.unique) var pokemonId: Int   // National Dex ID
+    var pokemonId: Int 
     var name: String
     var spriteURL: String
 

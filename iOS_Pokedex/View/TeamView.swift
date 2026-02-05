@@ -6,9 +6,11 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct TeamView: View {
-    @ObservedObject var teamVM: TeamViewModel
+    @State var teamVM: TeamViewModel
+    @Query private var team: [TeamPokemon]
 
     var body: some View {
         ZStack {
@@ -29,12 +31,12 @@ struct TeamView: View {
                     .shadow(radius: 5)
                 
                 // Subtitle: team count
-                Text("\(teamVM.team.count)/6 Pokémon")
+                Text("\(team.count)/6 Pokémon")
                     .font(.system(size: 18, weight: .medium, design: .rounded))
                     .foregroundColor(.white.opacity(0.8))
                     .padding(.bottom, 10)
 
-                if teamVM.team.isEmpty {
+                if team.isEmpty {
                     Spacer()
                     Text("Your team is empty!")
                         .foregroundColor(.white.opacity(0.7))
@@ -43,7 +45,7 @@ struct TeamView: View {
                 } else {
                     ScrollView {
                         LazyVStack(spacing: 15) {
-                            ForEach(teamVM.team) { pokemon in
+                            ForEach(team) { pokemon in
                                 HStack(spacing: 20) {
                                     // Pokémon sprite
                                     AsyncImage(url: URL(string: pokemon.spriteURL)) { image in
