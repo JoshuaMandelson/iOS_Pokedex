@@ -24,25 +24,46 @@ struct CreaturesListView: View {
                     )
                     .ignoresSafeArea()
 
-                    List(creatures.creaturesArray, id: \.self) { creature in
-                        NavigationLink {
-                            if let teamVM {
-                                DetailView(
-                                    creatureURL: creature.url,
-                                    pokemonId: creature.hashValue,
-                                    name: creature.name,
-                                    teamVM: teamVM
-                                )
+                    ScrollView {
+                        ForEach(creatures.creaturesArray, id: \.self) { creature in
+                            NavigationLink {
+                                if let teamVM {
+                                    DetailView(
+                                        creatureURL: creature.url,
+                                        pokemonId: creature.hashValue,
+                                        name: creature.name,
+                                        teamVM: teamVM
+                                    )
+                                }
+                            } label: {
+                                HStack {
+                                    Image("pokeball")
+                                        .resizable()
+                                        .frame(width: 30, height: 30)
+                                    Spacer()
+                                    Text(creature.name.capitalized)
+                                        .font(.title2)
+                                    Spacer()
+                                }
+                                .padding(5)
+                                .background(Color.white.opacity(0.2))
+                                .foregroundStyle(.white)
+                                .clipShape(RoundedRectangle(cornerRadius: 20))
+                                .padding(.horizontal)
                             }
-                        } label: {
-                            Text(creature.name.capitalized)
-                                .font(.title2)
+                            .scrollTransition { content, phase in
+                                content
+                                    .opacity(phase.isIdentity ? 1 : 0.3)
+                                    .offset(x: phase.isIdentity ? 0 : 300)
+                            }
                         }
-                        .listRowBackground(Color.clear)
+
+                        .navigationTitle("Pokedex")
                     }
-                    .foregroundStyle(.white)
-                    .scrollContentBackground(.hidden)
-                    .navigationTitle("Pokedex")
+                    .scrollIndicators(.hidden)
+                    .scrollTargetLayout()
+                    .scrollTargetBehavior(.viewAligned)
+                    
                 }
             }
             .tabItem {
