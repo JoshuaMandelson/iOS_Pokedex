@@ -13,7 +13,7 @@ Fetches and displays detailed Pokémon data including height, weight, and sprite
 
     •    Team Builder
 Allows users to add Pokémon to a team with a maximum of six members.
-Prevents duplicates and persists data using SwiftData.
+Persists data using SwiftData.
 Supports removing Pokémon from the team.
 
     •    User Feedback
