@@ -42,7 +42,8 @@ struct CreaturesListView: View {
                                         .frame(width: 30, height: 30)
                                     Spacer()
                                     Text(creature.name.capitalized)
-                                        .font(.title2)
+                                        .font(Font.custom("Avenir Next Condensed", size: 20))
+                                        .fontWeight(.bold)
                                     Spacer()
                                 }
                                 .padding(5)

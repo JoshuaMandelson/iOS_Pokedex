@@ -99,10 +99,10 @@ struct DetailView: View {
                 } label: {
                     Text("Add to Team")
                         .font(.headline)
-                        .foregroundColor(.blue)
+                        .foregroundColor(.white)
                         .frame(maxWidth: .infinity)
                         .padding()
-                        .background(Color.white)
+                        .background(Color.white.opacity(0.4))
                         .clipShape(RoundedRectangle(cornerRadius: 15))
                         .shadow(radius: 5, x: 3, y: 3)
                 }
