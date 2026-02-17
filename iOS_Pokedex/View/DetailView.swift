@@ -101,9 +101,7 @@ struct DetailView: View {
                     }
                 }
                 .padding(.horizontal)
-                
-                Spacer()
-                
+                                
                 // Add to Team Button
                 Button {
                     if teamVM.canAddToTeam(currentCount: team.count) {
@@ -125,7 +123,7 @@ struct DetailView: View {
                         .clipShape(RoundedRectangle(cornerRadius: 15))
                         .shadow(radius: 5, x: 3, y: 3)
                 }
-                .padding(.horizontal)
+                .padding()
             }
             .padding(.top, 30)
             .padding(.bottom, 20)
