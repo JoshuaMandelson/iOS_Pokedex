@@ -83,6 +83,25 @@ struct DetailView: View {
                     }
                 }
                 
+                // Base Stats Section
+                VStack(spacing: 12) {
+                    Text("Base Stats")
+                        .font(.title2)
+                        .fontWeight(.bold)
+                        .foregroundColor(.white)
+                        .padding(.bottom, 5)
+                    
+                    LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 2), spacing: 10) {
+                        BaseStatView(statName: "HP", statValue: detail.baseStats["hp"] ?? 0)
+                        BaseStatView(statName: "Attack", statValue: detail.baseStats["attack"] ?? 0)
+                        BaseStatView(statName: "Defense", statValue: detail.baseStats["defense"] ?? 0)
+                        BaseStatView(statName: "Sp. Attack", statValue: detail.baseStats["special-attack"] ?? 0)
+                        BaseStatView(statName: "Sp. Defense", statValue: detail.baseStats["special-defense"] ?? 0)
+                        BaseStatView(statName: "Speed", statValue: detail.baseStats["speed"] ?? 0)
+                    }
+                }
+                .padding(.horizontal)
+                
                 Spacer()
                 
                 // Add to Team Button
@@ -122,6 +141,58 @@ struct DetailView: View {
         .task {
             detail.urlString = creatureURL
             await detail.getData()
+        }
+    }
+}
+
+struct BaseStatView: View {
+    let statName: String
+    let statValue: Int
+    
+    var body: some View {
+        VStack(spacing: 8) {
+            Text(statName)
+                .font(.caption)
+                .fontWeight(.semibold)
+                .foregroundColor(.white)
+                .multilineTextAlignment(.center)
+            
+            ZStack {
+                // Background bar
+                RoundedRectangle(cornerRadius: 8)
+                    .frame(height: 20)
+                    .foregroundColor(.white.opacity(0.2))
+                
+                // Progress bar
+                GeometryReader { geometry in
+                    RoundedRectangle(cornerRadius: 8)
+                        .frame(width: max(0, min(geometry.size.width, geometry.size.width * CGFloat(statValue) / 200)), height: 20)
+                        .foregroundColor(colorForStat(statValue))
+                }
+                .frame(height: 20)
+                
+                // Stat value text
+                Text("\(statValue)")
+                    .font(.caption)
+                    .fontWeight(.bold)
+                    .foregroundColor(.white)
+            }
+        }
+        .frame(maxWidth: .infinity)
+    }
+    
+    private func colorForStat(_ value: Int) -> Color {
+        switch value {
+        case 0..<50:
+            return .red.opacity(0.8)
+        case 50..<80:
+            return .orange.opacity(0.8)
+        case 80..<110:
+            return .yellow.opacity(0.8)
+        case 110..<140:
+            return .green.opacity(0.8)
+        default:
+            return .blue.opacity(0.8)
         }
     }
 }
