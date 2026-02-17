@@ -16,4 +16,7 @@ struct iOS_PokedexApp: App {
         }
         .modelContainer(for: TeamPokemon.self)
     }
+    init() {
+        print(URL.applicationSupportDirectory.path(percentEncoded: false))
+    }
 }
